@@ -1,3 +1,5 @@
+<img width="1153" height="776" alt="image" src="https://github.com/user-attachments/assets/31821b0f-0c26-48c4-a11f-cf4d81b09f93" />
+
 # 🔐 Secure Hybrid Crypto Engine (SHCE)
 
 A full-stack web application that unifies **classical** and **post-quantum** cryptographic operations into a single, cohesive platform. Built for security engineers, developers, and researchers who need to explore, test, and compare cryptographic algorithms across paradigms.
