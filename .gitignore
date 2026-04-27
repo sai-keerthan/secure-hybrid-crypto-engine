@@ -1,0 +1,47 @@
+# ══════════════════════════════════════════════════
+# Root .gitignore — Secure Hybrid Crypto Engine
+# ══════════════════════════════════════════════════
+
+# ── Java / Maven ──────────────────────────────────
+target/
+!.mvn/wrapper/maven-wrapper.jar
+*.class
+*.jar
+*.war
+*.ear
+
+# ── Node / Frontend ───────────────────────────────
+node_modules/
+dist/
+.vite/
+
+# ── IDE ───────────────────────────────────────────
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.project
+.classpath
+.settings/
+*.swp
+*.swo
+*~
+
+# ── OS ────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Environment / Secrets ─────────────────────────
+.env
+.env.*
+*.env.local
+
+# ── Logs ──────────────────────────────────────────
+*.log
+logs/
+
+# ── Build artifacts ───────────────────────────────
+*.zip
+*.tar.gz
