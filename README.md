@@ -68,7 +68,7 @@ Quantum computers will eventually break RSA, ECDSA, and other widely-deployed pu
 ## Quick Start
 
 ### Prerequisites
-- **Java 21+** ([Download][(https://adoptium.net/)](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html))
+- **Java 21+** ([Download](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html))
 - **Maven 3.9+** ([Download](https://maven.apache.org/download.cgi))
 - **Node.js 18+** ([Download](https://nodejs.org/))
 
