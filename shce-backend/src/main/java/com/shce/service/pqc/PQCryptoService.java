@@ -148,6 +148,10 @@ public class PQCryptoService {
 
         // Step 1: Extract encapsulation
         int encapLen = buffer.getInt();
+        if (encapLen <= 0 || encapLen > buffer.remaining()) {
+            throw new CryptoOperationException(
+                    "Invalid ML-KEM payload: encapsulation length out of bounds");
+        }
         byte[] encapsulation = new byte[encapLen];
         buffer.get(encapsulation);
 

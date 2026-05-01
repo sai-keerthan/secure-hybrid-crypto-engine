@@ -265,7 +265,7 @@ export default function AboutPage() {
         {/* ── Tech Stack ────────────────────────────────────── */}
         <Section title="TECH STACK">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {['Java 21', 'Spring Boot 3.3', 'Bouncy Castle 1.80', 'Maven',
+            {['Java 21', 'Spring Boot 4.0', 'Bouncy Castle 1.84', 'Maven',
               'React 18', 'Vite 5', 'Tailwind CSS 3', 'Axios'].map((t) => (
               <div key={t} className="card-light p-4 text-center text-sm font-mono text-charcoal/60">
                 {t}

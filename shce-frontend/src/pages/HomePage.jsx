@@ -26,7 +26,7 @@ export default function HomePage() {
           animate-fade-up">
           <div className="w-2 h-2 rounded-full bg-golden" />
           <span className="text-xs font-medium tracking-widest uppercase text-charcoal/50">
-            Bouncy Castle 1.80 · Java 21
+            Bouncy Castle 1.84 · Java 21
           </span>
         </div>
 

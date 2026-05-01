@@ -7,19 +7,19 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.5</version>
+        <version>4.0.6</version>
         <relativePath/>
     </parent>
 
     <groupId>com.shce</groupId>
     <artifactId>secure-hybrid-crypto-engine</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1</version>
     <name>Secure Hybrid Crypto Engine</name>
     <description>A hybrid cryptography engine supporting both classical and post-quantum algorithms</description>
 
     <properties>
         <java.version>21</java.version>
-        <bouncy-castle.version>1.80</bouncy-castle.version>
+        <bouncy-castle.version>1.84</bouncy-castle.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
     </properties>
@@ -29,6 +29,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
