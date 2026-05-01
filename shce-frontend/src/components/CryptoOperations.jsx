@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Lock, Unlock, PenLine, ShieldCheck, Loader2, Copy, CheckCircle } from 'lucide-react';
 import { encrypt, decrypt, sign, verify } from '../services/api';
 
@@ -31,7 +31,9 @@ export default function CryptoOperations({ algorithm, keyData }) {
   const needsPublicKey = selectedOp === 'ENCRYPT' || selectedOp === 'VERIFY';
   const isSymmetric = family === 'AES';
 
-  // Auto-fill the correct key and clear fields when operation changes
+  const prevOpRef = useRef(null);
+
+  // Only auto-fills the correct key when operation is confirmed and set
   useEffect(() => {
     if (!selectedOp || !keyData) return;
     if (isSymmetric) {
@@ -41,10 +43,35 @@ export default function CryptoOperations({ algorithm, keyData }) {
     } else {
       setKeyPem(keyData.privateKeyPem || '');
     }
+  }, [selectedOp]);
+
+  // Handle operation button click — shows alert BEFORE any state change
+  const handleOpSelect = (opId) => {
+    if (!opId) return;
+
+    // Only prompt if switching FROM a completed operation WITH output
+    if (prevOpRef.current && prevOpRef.current !== opId && result?.outputData) {
+      const outputLabel =
+        prevOpRef.current === 'ENCRYPT' ? 'ciphertext' :
+        prevOpRef.current === 'SIGN'    ? 'signature'  :
+        prevOpRef.current === 'DECRYPT' ? 'decrypted text' : 'output';
+
+      const confirmed = window.confirm(
+        `Switching operations will clear all fields.\n\n` +
+        `Make sure you have copied your ${outputLabel} before continuing.\n\nProceed?`
+      );
+
+      // User clicked Cancel — do nothing, preserve all fields exactly as they are
+      if (!confirmed) return;
+    }
+
+    // User confirmed (or no prompt needed) — now clear and switch
+    prevOpRef.current = opId;
+    setSelectedOp(opId);
     setInputData('');
     setSignatureBase64('');
     setResult(null);
-  }, [selectedOp]);
+  };
 
   const handleExecute = async () => {
     setLoading(true); setResult(null);
@@ -79,7 +106,7 @@ export default function CryptoOperations({ algorithm, keyData }) {
             const supported = supportedOps.includes(op.id);
             const selected = selectedOp === op.id;
             return (
-              <button key={op.id} onClick={() => supported && setSelectedOp(op.id)} disabled={!supported}
+              <button key={op.id} onClick={() => supported && handleOpSelect(op.id)} disabled={!supported}
                 className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ease-smooth
                   ${!supported ? 'opacity-20 cursor-not-allowed bg-cream border border-charcoal/5' :
                     selected ? 'bg-golden text-charcoal border border-golden shadow-sm' :

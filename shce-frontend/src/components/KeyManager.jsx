@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { KeyRound, Upload, Download, Loader2, CheckCircle, FileKey, X } from 'lucide-react';
 import { generateKeys } from '../services/api';
 
@@ -39,9 +39,17 @@ export default function KeyManager({ algorithm, onKeysReady }) {
   };
 
   const genReady = generatedKeys && (isSymmetric ? privateDownloaded : publicDownloaded && privateDownloaded);
-  if (genReady && generatedKeys) {
-    onKeysReady({ publicKeyPem: generatedKeys.publicKeyPem, privateKeyPem: generatedKeys.privateKeyPem, algorithm: generatedKeys.algorithm });
-  }
+
+  // Fire onKeysReady exactly once when both keys are downloaded — never during render
+  useEffect(() => {
+    if (genReady && generatedKeys) {
+      onKeysReady({
+        publicKeyPem: generatedKeys.publicKeyPem,
+        privateKeyPem: generatedKeys.privateKeyPem,
+        algorithm: generatedKeys.algorithm,
+      });
+    }
+  }, [genReady]);
 
   const handleFileUpload = (file, type) => {
     if (!file) return;
