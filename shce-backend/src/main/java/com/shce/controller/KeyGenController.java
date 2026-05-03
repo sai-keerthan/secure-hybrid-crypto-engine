@@ -34,11 +34,19 @@ public class KeyGenController {
     @PostMapping("/generate")
     public ResponseEntity<KeyGenResponse> generateKey(
             @Valid @RequestBody KeyGenRequest request, HttpServletRequest httpReq) {
+        String requestId = UUID.randomUUID().toString().substring(0, 8);
+        String principal = httpReq.getUserPrincipal() != null
+                ? httpReq.getUserPrincipal().getName() : "anonymous";
+
+        KeyGenResponse response = keyGenService.generateKey(request);
+
+        // NF-01 fix: audit log fires AFTER service call — records actual outcome
         log.info("AUDIT requestId={} action=KEY_GEN algo={} ip={} principal={} success=true",
-                UUID.randomUUID().toString().substring(0, 8),
+                requestId,
                 request.getAlgorithm(),
                 httpReq.getRemoteAddr(),
-                httpReq.getUserPrincipal() != null ? httpReq.getUserPrincipal().getName() : "anonymous");        KeyGenResponse response = keyGenService.generateKey(request);
+                principal);
+
         return ResponseEntity.ok(response);
     }
 
