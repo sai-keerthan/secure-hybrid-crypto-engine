@@ -13,7 +13,7 @@
 
     <groupId>com.shce</groupId>
     <artifactId>secure-hybrid-crypto-engine</artifactId>
-    <version>1.0.1</version>
+    <version>2.0.0</version>
     <name>Secure Hybrid Crypto Engine</name>
     <description>A hybrid cryptography engine supporting both classical and post-quantum algorithms</description>
 

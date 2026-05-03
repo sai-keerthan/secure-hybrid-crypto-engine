@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(python -m pip install fpdf2 2>&1 | Select-Object -Last 5)",
+      "WebSearch"
+    ]
+  }
+}
