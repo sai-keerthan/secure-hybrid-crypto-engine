@@ -141,13 +141,16 @@ export default function CryptoOperations({ algorithm, keyData }) {
               </span>
             </div>
             <textarea className="textarea-field h-28 bg-cream/80 cursor-not-allowed"
-              value={keyPem}
-              readOnly
-              onPaste={blockInput}
-              onCopy={blockInput}
-              onCut={blockInput}
-              tabIndex={-1}
-              style={{ userSelect: 'none' }}
+                      value={keyPem}
+                      readOnly
+                      onPaste={blockInput}
+                      onCopy={blockInput}
+                      onCut={blockInput}
+                      tabIndex={-1}
+                      autoComplete="off"
+                      autoCorrect="off"
+                      spellCheck="false"
+                      style={{ userSelect: 'none' }}
             />
           </div>
 
@@ -183,8 +186,8 @@ export default function CryptoOperations({ algorithm, keyData }) {
                   {result.outputData}
                 </pre>
               )}
-              {result.processingTimeMs !== undefined && (
-                <p className="text-xs font-mono text-charcoal/30 mt-2">Processed in {result.processingTimeMs}ms</p>
+              {result.processingTimeMs != null && (
+                  <p className="text-xs font-mono text-charcoal/30 mt-2">Processed in {result.processingTimeMs}ms</p>
               )}
             </div>
           )}

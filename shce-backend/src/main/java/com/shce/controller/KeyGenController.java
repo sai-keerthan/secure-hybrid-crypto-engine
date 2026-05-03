@@ -5,6 +5,7 @@ import com.shce.dto.response.KeyGenResponse;
 import com.shce.enums.Algorithm;
 import com.shce.enums.CryptoMode;
 import com.shce.service.keygen.KeyGenService;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ public class KeyGenController {
     /**
      * Generate a key pair for the specified algorithm.
      */
+    @RateLimiter(name = "keyGenRateLimit")
     @PostMapping("/generate")
     public ResponseEntity<KeyGenResponse> generateKey(
             @Valid @RequestBody KeyGenRequest request) {

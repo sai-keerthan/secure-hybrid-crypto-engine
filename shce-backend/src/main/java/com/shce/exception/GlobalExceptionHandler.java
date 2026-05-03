@@ -18,14 +18,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CryptoOperationException.class)
     public ResponseEntity<Map<String, Object>> handleCryptoException(CryptoOperationException ex) {
-        log.error("Crypto operation failed: {}", ex.getMessage(), ex);
-        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        log.error("[CRYPTO_FAIL] internal={}", ex.getMessage(), ex);
+        return buildResponse(HttpStatus.BAD_REQUEST,
+                "Crypto operation failed. Verify your key format and input data.");
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
-        log.warn("Invalid argument: {}", ex.getMessage());
-        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        log.warn("[INVALID_INPUT] internal={}", ex.getMessage());
+        return buildResponse(HttpStatus.BAD_REQUEST, "Invalid input provided.");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

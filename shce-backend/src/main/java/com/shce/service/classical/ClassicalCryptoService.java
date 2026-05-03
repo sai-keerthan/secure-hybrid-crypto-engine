@@ -41,8 +41,6 @@ public class ClassicalCryptoService {
                     algorithm + " does not support " + operation);
         }
 
-        long start = System.currentTimeMillis();
-
         try {
             CryptoResponse response = switch (algorithm.getFamily()) {
                 case "RSA" -> handleRsa(request);
@@ -52,7 +50,6 @@ public class ClassicalCryptoService {
                         "Unsupported classical family: " + algorithm.getFamily());
             };
 
-            response.setProcessingTimeMs(System.currentTimeMillis() - start);
             return response;
 
         } catch (CryptoOperationException e) {
@@ -271,7 +268,16 @@ public class ClassicalCryptoService {
      * Decode the Base64 raw AES key (not PEM — symmetric keys have no PEM wrapper).
      */
     private SecretKey decodeAesKey(String keyBase64) {
-        byte[] keyBytes = Base64.getDecoder().decode(keyBase64);
+        byte[] keyBytes;
+        try {
+            keyBytes = Base64.getDecoder().decode(keyBase64.trim());
+        } catch (IllegalArgumentException e) {
+            throw new CryptoOperationException("Invalid AES key: not valid Base64");
+        }
+        if (keyBytes.length != 16 && keyBytes.length != 32) {
+            throw new CryptoOperationException(
+                    "Invalid AES key length. Expected 16 bytes (AES-128) or 32 bytes (AES-256)");
+        }
         return new SecretKeySpec(keyBytes, "AES");
     }
 }

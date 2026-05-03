@@ -22,6 +22,9 @@ import java.util.Base64;
 import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
 import org.bouncycastle.jcajce.spec.KEMExtractSpec;
 import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
+import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
+import org.bouncycastle.crypto.params.HKDFParameters;
+import org.bouncycastle.crypto.digests.SHA256Digest;
 
 @Slf4j
 @Service
@@ -46,8 +49,6 @@ public class PQCryptoService {
                     algorithm + " does not support " + operation);
         }
 
-        long start = System.currentTimeMillis();
-
         try {
             CryptoResponse response = switch (algorithm.getFamily()) {
                 case "ML-KEM" -> handleMlKem(request);
@@ -56,7 +57,6 @@ public class PQCryptoService {
                         "Unsupported PQC family: " + algorithm.getFamily());
             };
 
-            response.setProcessingTimeMs(System.currentTimeMillis() - start);
             return response;
 
         } catch (CryptoOperationException e) {
@@ -104,11 +104,9 @@ public class PQCryptoService {
         byte[] encapsulation = secretKeyWithEncap.getEncapsulation();
         byte[] sharedSecret = secretKeyWithEncap.getEncoded();
 
-        // Step 2: Derive AES-256 key from shared secret (use first 32 bytes)
-        byte[] aesKeyBytes = new byte[32];
-        System.arraycopy(sharedSecret, 0, aesKeyBytes, 0,
-                Math.min(sharedSecret.length, 32));
-        SecretKey aesKey = new SecretKeySpec(aesKeyBytes, "AES");
+        // Step 2: Derive AES-256 key via HKDF — NIST SP 800-227 recommended
+        SecretKey aesKey = deriveAesKeyHkdf(sharedSecret);
+
 
         // Step 3: AES-GCM encrypt
         byte[] iv = new byte[GCM_IV_LENGTH];
@@ -163,11 +161,8 @@ public class PQCryptoService {
 
         byte[] sharedSecret = secretKeyWithEncap.getEncoded();
 
-        // Step 3: Derive AES-256 key
-        byte[] aesKeyBytes = new byte[32];
-        System.arraycopy(sharedSecret, 0, aesKeyBytes, 0,
-                Math.min(sharedSecret.length, 32));
-        SecretKey aesKey = new SecretKeySpec(aesKeyBytes, "AES");
+        // Step 3: Derive AES-256 key via HKDF — NIST SP 800-227 recommended
+        SecretKey aesKey = deriveAesKeyHkdf(sharedSecret);
 
         // Step 4: Extract IV and ciphertext
         byte[] iv = new byte[GCM_IV_LENGTH];
@@ -190,6 +185,23 @@ public class PQCryptoService {
                 .build();
     }
 
+    /**
+     * W1: Derive a 256-bit AES key from ML-KEM shared secret using HKDF.
+     * Uses SHA-256 as the hash function per NIST SP 800-227.
+     * The info string binds the derived key to this specific usage context.
+     */
+    private SecretKey deriveAesKeyHkdf(byte[] sharedSecret) {
+        HKDFBytesGenerator hkdf = new HKDFBytesGenerator(new SHA256Digest());
+        hkdf.init(new HKDFParameters(
+                sharedSecret,
+                null,   // salt — omitted, shared secret is already high entropy
+                "SHCE-ML-KEM-AES256-KEY".getBytes(StandardCharsets.UTF_8)
+        ));
+        byte[] aesKeyBytes = new byte[32];
+        hkdf.generateBytes(aesKeyBytes, 0, 32);
+        return new SecretKeySpec(aesKeyBytes, "AES");
+    }
+
     // ═══════════════════════════════════════════════════════════════
     // ML-DSA (FIPS 204) — Digital Signature Sign / Verify
     // ═══════════════════════════════════════════════════════════════
@@ -206,7 +218,14 @@ public class PQCryptoService {
     private CryptoResponse mlDsaSign(CryptoRequest request) throws Exception {
         PrivateKey privateKey = PemUtil.parsePrivateKey(request.getKeyPem());
 
-        Signature signature = Signature.getInstance("ML-DSA", "BC");
+        String sigAlgo = switch (request.getAlgorithm()) {
+            case ML_DSA_44 -> "ML-DSA-44";
+            case ML_DSA_65 -> "ML-DSA-65";
+            case ML_DSA_87 -> "ML-DSA-87";
+            default -> throw new CryptoOperationException(
+                    "Unknown ML-DSA variant: " + request.getAlgorithm());
+        };
+        Signature signature = Signature.getInstance(sigAlgo, "BC");
         signature.initSign(privateKey, secureRandom);
         signature.update(request.getInputData().getBytes(StandardCharsets.UTF_8));
 
@@ -226,7 +245,14 @@ public class PQCryptoService {
     private CryptoResponse mlDsaVerify(CryptoRequest request) throws Exception {
         PublicKey publicKey = PemUtil.parsePublicKey(request.getKeyPem());
 
-        Signature signature = Signature.getInstance("ML-DSA", "BC");
+        String sigAlgo = switch (request.getAlgorithm()) {
+            case ML_DSA_44 -> "ML-DSA-44";
+            case ML_DSA_65 -> "ML-DSA-65";
+            case ML_DSA_87 -> "ML-DSA-87";
+            default -> throw new CryptoOperationException(
+                    "Unknown ML-DSA variant: " + request.getAlgorithm());
+        };
+        Signature signature = Signature.getInstance(sigAlgo, "BC");
         signature.initVerify(publicKey);
         signature.update(request.getInputData().getBytes(StandardCharsets.UTF_8));
 

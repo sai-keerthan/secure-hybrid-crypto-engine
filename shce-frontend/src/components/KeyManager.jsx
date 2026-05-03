@@ -40,6 +40,15 @@ export default function KeyManager({ algorithm, onKeysReady }) {
 
   const genReady = generatedKeys && (isSymmetric ? privateDownloaded : publicDownloaded && privateDownloaded);
 
+  // I7: Clear key material from memory when component unmounts
+  useEffect(() => {
+    return () => {
+      setGeneratedKeys(null);
+      setPublicKeyPem(null);
+      setPrivateKeyPem(null);
+    };
+  }, []);
+
   // Fire onKeysReady exactly once when both keys are downloaded — never during render
   useEffect(() => {
     if (genReady && generatedKeys) {

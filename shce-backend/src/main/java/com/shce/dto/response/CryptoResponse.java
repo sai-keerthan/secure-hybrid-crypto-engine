@@ -18,5 +18,5 @@ public class CryptoResponse {
     private String outputData;
     private boolean success;
     private String message;
-    private long processingTimeMs;
+    private Long processingTimeMs;
 }

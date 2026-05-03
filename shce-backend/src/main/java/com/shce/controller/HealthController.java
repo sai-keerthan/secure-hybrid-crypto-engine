@@ -22,7 +22,7 @@ public class HealthController {
         Map<String, Object> status = new LinkedHashMap<>();
         status.put("status", "UP");
         status.put("application", "Secure Hybrid Crypto Engine");
-        status.put("version", "1.0.0-SNAPSHOT");
+        status.put("version", "1.0.1");
         status.put("timestamp", Instant.now().toString());
         status.put("javaVersion", System.getProperty("java.version"));
 
