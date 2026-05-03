@@ -50,9 +50,12 @@ public class CryptoController {
             response.setProcessingTimeMs(null);
         }
 
-        log.info("AUDIT requestId={} action=ENCRYPT algo={} ip={} success={}",
-                requestId, request.getAlgorithm(),
-                httpReq.getRemoteAddr(), response.isSuccess());
+        log.info("AUDIT requestId={} action=ENCRYPT algo={} ip={} principal={} success={}",
+                requestId,
+                request.getAlgorithm(),
+                httpReq.getRemoteAddr(),
+                httpReq.getUserPrincipal() != null ? httpReq.getUserPrincipal().getName() : "anonymous",
+                response.isSuccess());
 
         return ResponseEntity.ok(response);
     }
@@ -69,9 +72,12 @@ public class CryptoController {
             response.setProcessingTimeMs(null);
         }
 
-        log.info("AUDIT requestId={} action=DECRYPT algo={} ip={} success={}",
-                requestId, request.getAlgorithm(),
-                httpReq.getRemoteAddr(), response.isSuccess());
+        log.info("AUDIT requestId={} action=DECRYPT algo={} ip={} principal={} success={}",
+                requestId,
+                request.getAlgorithm(),
+                httpReq.getRemoteAddr(),
+                httpReq.getUserPrincipal() != null ? httpReq.getUserPrincipal().getName() : "anonymous",
+                response.isSuccess());
 
         return ResponseEntity.ok(response);
     }
@@ -88,9 +94,12 @@ public class CryptoController {
             response.setProcessingTimeMs(null);
         }
 
-        log.info("AUDIT requestId={} action=SIGN algo={} ip={} success={}",
-                requestId, request.getAlgorithm(),
-                httpReq.getRemoteAddr(), response.isSuccess());
+        log.info("AUDIT requestId={} action=SIGN algo={} ip={} principal={} success={}",
+                requestId,
+                request.getAlgorithm(),
+                httpReq.getRemoteAddr(),
+                httpReq.getUserPrincipal() != null ? httpReq.getUserPrincipal().getName() : "anonymous",
+                response.isSuccess());
 
         return ResponseEntity.ok(response);
     }
@@ -106,10 +115,12 @@ public class CryptoController {
         if (!isDebugAllowedForRequest(httpReq)) {
             response.setProcessingTimeMs(null);
         }
-
-        log.info("AUDIT requestId={} action=VERIFY algo={} ip={} success={}",
-                requestId, request.getAlgorithm(),
-                httpReq.getRemoteAddr(), response.isSuccess());
+        log.info("AUDIT requestId={} action=VERIFY algo={} ip={} principal={} success={}",
+                requestId,
+                request.getAlgorithm(),
+                httpReq.getRemoteAddr(),
+                httpReq.getUserPrincipal() != null ? httpReq.getUserPrincipal().getName() : "anonymous",
+                response.isSuccess());
 
         return ResponseEntity.ok(response);
     }

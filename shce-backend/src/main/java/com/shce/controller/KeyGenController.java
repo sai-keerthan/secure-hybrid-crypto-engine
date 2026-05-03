@@ -6,6 +6,7 @@ import com.shce.enums.Algorithm;
 import com.shce.enums.CryptoMode;
 import com.shce.service.keygen.KeyGenService;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -31,9 +33,12 @@ public class KeyGenController {
     @RateLimiter(name = "keyGenRateLimit")
     @PostMapping("/generate")
     public ResponseEntity<KeyGenResponse> generateKey(
-            @Valid @RequestBody KeyGenRequest request) {
-        log.info("Key generation request received for algorithm: {}", request.getAlgorithm());
-        KeyGenResponse response = keyGenService.generateKey(request);
+            @Valid @RequestBody KeyGenRequest request, HttpServletRequest httpReq) {
+        log.info("AUDIT requestId={} action=KEY_GEN algo={} ip={} principal={} success=true",
+                UUID.randomUUID().toString().substring(0, 8),
+                request.getAlgorithm(),
+                httpReq.getRemoteAddr(),
+                httpReq.getUserPrincipal() != null ? httpReq.getUserPrincipal().getName() : "anonymous");        KeyGenResponse response = keyGenService.generateKey(request);
         return ResponseEntity.ok(response);
     }
 
