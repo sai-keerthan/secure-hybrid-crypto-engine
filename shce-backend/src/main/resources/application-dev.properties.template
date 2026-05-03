@@ -1,6 +1,6 @@
 # ══════════════════════════════════════════════════════
-# Dev Profile — overrides application.properties
-# Active when: -Dspring.profiles.active=dev
+# Dev Profile Template — copy to application-dev.properties
+# and fill in your own values. Never commit the real file.
 # ══════════════════════════════════════════════════════
 
 # Debug logging for local development
@@ -14,7 +14,7 @@ shce.debug.allowed-ips=127.0.0.1,0:0:0:0:0:0:0:1
 # Relaxed CORS for local Vite dev server
 shce.cors.allowed-origins=https://localhost:5173,http://localhost:5173
 
-# ── Dev API Key — Sprint 4 ─────────────────────────────────────
-# Change this to your own generated value — do not commit a real key
-# Generate one: openssl rand -base64 32
-shce.api.key=yMWuD0FuoI3JaL/Ke4B7Z05yDF12egwiE+QuzsM069g=
+# ── Dev API Key ────────────────────────────────────────
+# Generate your own: openssl rand -base64 32
+# Must match the X-API-Key value in vite.config.js
+shce.api.key=REPLACE_WITH_YOUR_OWN_KEY

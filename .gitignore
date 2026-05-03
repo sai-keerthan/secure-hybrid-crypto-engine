@@ -45,3 +45,6 @@ logs/
 # ── Build artifacts ───────────────────────────────
 *.zip
 *.tar.gz
+
+# Dev properties contain local secrets — never commit
+shce-backend/src/main/resources/application-dev.properties
